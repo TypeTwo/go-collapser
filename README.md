@@ -1,6 +1,8 @@
 Collapser
 ===
 
+[![Build Status](https://travis-ci.org/TypeTwo/go-collapser.svg?branch=master)](https://travis-ci.org/TypeTwo/go-collapser)
+
 Package `go-collapser` implements a function call deduplication utility.
 
 ---
@@ -11,14 +13,10 @@ Package `go-collapser` implements a function call deduplication utility.
 go get -u github.com/TypeTwo/go-collapser
 ```
 
----
-
 ## Design goals
 
 - No external dependencies
 - Easy to use
-
----
 
 ## License
 
