@@ -7,6 +7,7 @@ package collapser
 import (
 	"strconv"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 )
@@ -114,13 +115,13 @@ func TestCollapserKeys(t *testing.T) {
 	c := NewCollapser()
 
 	var text = "text"
-	var cnt int
+	var cnt uint64
 
 	f := func() interface{} {
 		// sleep to give a chance to other
 		// goroutines to enter c.Do()
 		time.Sleep(100 * time.Millisecond)
-		cnt++
+		atomic.AddUint64(&cnt, 1)
 		return text
 	}
 
@@ -144,7 +145,7 @@ func TestCollapserKeys(t *testing.T) {
 
 	wg.Wait()
 
-	if cnt != n {
+	if got := int(atomic.LoadUint64(&cnt)); got != n {
 		t.Fatalf("expected collapsed function to be invoked %d times", n)
 	}
 }
