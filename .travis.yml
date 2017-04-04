@@ -10,4 +10,5 @@ go:
   - 1.8
   - tip
 
-gobuild_args: -v -race -cover
+script:
+  - go test -v -race -cover ./...
