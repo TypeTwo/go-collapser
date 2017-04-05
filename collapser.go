@@ -16,7 +16,7 @@ import (
 // complete execution and then the result will be shared between callers.
 type Collapser struct {
 	m     sync.Mutex
-	tasks map[string]*task
+	tasks map[interface{}]*task
 }
 
 // TaskResult provides access to the function result.
@@ -45,7 +45,7 @@ type task struct {
 // NewCollapser returns a new Collapser in initialized state.
 func NewCollapser() *Collapser {
 	return &Collapser{
-		tasks: make(map[string]*task),
+		tasks: make(map[interface{}]*task),
 	}
 }
 
@@ -56,7 +56,7 @@ func NewCollapser() *Collapser {
 // executing will be blocked waiting for the running invocation to complete,
 // and will receive a TaskResult object wrapping the function result of the
 // original function.
-func (c *Collapser) Do(key string, f func() interface{}) *TaskResult {
+func (c *Collapser) Do(key interface{}, f func() interface{}) *TaskResult {
 	c.m.Lock()
 	t, exists := c.tasks[key]
 	if !exists {

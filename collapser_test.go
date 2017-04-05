@@ -5,7 +5,6 @@
 package collapser
 
 import (
-	"strconv"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -14,7 +13,7 @@ import (
 
 // Tests that Do() invokes the given function, and the returned TaskResult
 // contains the function return value.
-func TestCollapser(t *testing.T) {
+func TestDo(t *testing.T) {
 	coll := NewCollapser()
 
 	pre := 1
@@ -40,7 +39,7 @@ func TestCollapser(t *testing.T) {
 
 // Tests that subsequent (serial) invocations of Do() execute func
 // multiple times.
-func TestCollapsedFuncInvokedSerial(t *testing.T) {
+func TestDoInvokeSerial(t *testing.T) {
 	c := NewCollapser()
 
 	var cnt int
@@ -71,7 +70,7 @@ func TestCollapsedFuncInvokedSerial(t *testing.T) {
 
 // Tests that multiple (parallel) invocations of Do() execute func
 // exactly once.
-func TestCollapsedFuncInvokedParallel(t *testing.T) {
+func TestDoInvokeParallel(t *testing.T) {
 	c := NewCollapser()
 
 	var text = "text"
@@ -111,7 +110,7 @@ func TestCollapsedFuncInvokedParallel(t *testing.T) {
 
 // Tests that multiple (parallel) invocations of Do() using different keys
 // are not collapsed.
-func TestCollapserKeys(t *testing.T) {
+func TestDoDistinctKeys(t *testing.T) {
 	c := NewCollapser()
 
 	var text = "text"
@@ -131,8 +130,7 @@ func TestCollapserKeys(t *testing.T) {
 	for i := 0; i < n; i++ {
 		wg.Add(1)
 		go func(i int) {
-			key := "key_" + strconv.Itoa(i)
-			res := c.Do(key, f)
+			res := c.Do(i, f)
 			if res.Get().(string) != text {
 				t.Fatal("expected invocation to return a string value")
 			}
@@ -149,3 +147,30 @@ func TestCollapserKeys(t *testing.T) {
 		t.Fatalf("expected collapsed function to be invoked %d times", n)
 	}
 }
+
+func benchmarkDo(n int, b *testing.B) {
+	c := NewCollapser()
+
+	var cnt uint64
+
+	f := func() interface{} {
+		return atomic.AddUint64(&cnt, 1)
+	}
+
+	for i := 0; i < b.N; i++ {
+		for j := 0; j < n; j++ {
+			go func() {
+				c.Do("key", f).Get()
+			}()
+		}
+	}
+}
+
+func BenchmarkDo10(b *testing.B) {
+	benchmarkDo(10, b)
+}
+
+func BenchmarkDo20(b *testing.B) {
+	benchmarkDo(20, b)
+}
+

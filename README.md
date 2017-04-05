@@ -12,7 +12,7 @@ Package `go-collapser` implements a function call deduplication utility.
 ## Install
 
 ```sh
-go get -u github.com/TypeTwo/go-collapser
+go get github.com/TypeTwo/go-collapser
 ```
 
 ## Design goals
@@ -22,4 +22,4 @@ go get -u github.com/TypeTwo/go-collapser
 
 ## License
 
-The Collapser source files are distributed under the BSD-style license found in the LICENSE file.
+The Collapser source files are distributed under the BSD-style license found in the [LICENSE](https://github.com/TypeTwo/go-collapser/blob/master/LICENSE) file.
