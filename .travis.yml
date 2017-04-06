@@ -15,5 +15,5 @@ before_script:
 
 script:
   - GORACE="halt_on_error=1" go test -v -race -cover -covermode atomic ./...
-  - GORACE="halt_on_error=1" go test -v -race -bench . -benchmem
+  - GORACE="halt_on_error=1" go test -v -race -bench . -cpu 1,4,8
   - GORACE="halt_on_error=1" go test -v -bench . -benchmem
