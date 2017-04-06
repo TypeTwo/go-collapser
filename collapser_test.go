@@ -175,4 +175,3 @@ func BenchmarkDo10(b *testing.B) {
 func BenchmarkDo20(b *testing.B) {
 	benchmarkDo(20, b)
 }
-
