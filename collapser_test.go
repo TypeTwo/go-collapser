@@ -153,16 +153,18 @@ func benchmarkDo(n int, b *testing.B) {
 
 	var cnt uint64
 
-	f := func() interface{} {
-		return atomic.AddUint64(&cnt, 1)
-	}
-
 	for i := 0; i < b.N; i++ {
+		wg := &sync.WaitGroup{}
 		for j := 0; j < n; j++ {
+			wg.Add(1)
 			go func() {
-				c.Do("key", f).Get()
+				c.Do("key", func() interface{} {
+					return atomic.AddUint64(&cnt, 1)
+				}).Get()
+				wg.Done()
 			}()
 		}
+		wg.Wait()
 	}
 }
 
