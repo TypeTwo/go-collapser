@@ -3,6 +3,14 @@
 // license that can be found in the LICENSE file.
 
 // Package collapser provides a function call deduplication utility.
+//
+// In many real-world scenarios, under high load or traffic conditions,
+// an application may end up with several goroutines making the very same
+// - expensive - function call at the same time. A Collapser provides a lock
+// mechanism that enables multiple identical requests to be processed as one
+// single request: while the first goroutine is making progress, the rest will
+// be blocked waiting for the collapsed function to complete, and then will
+// receive the same result.
 package collapser
 
 import (
