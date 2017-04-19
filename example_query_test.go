@@ -20,7 +20,7 @@ func Example_databaseQuery() {
 
 	dbExec := func(q string) int {
 		fmt.Println("Query hit database!")
-		time.Sleep(1 * time.Second)
+		time.Sleep(100 * time.Millisecond)
 		return 42 // After much thought.
 	}
 
@@ -49,4 +49,3 @@ func Example_databaseQuery() {
 	// Query #1: 42
 	// Query #2: 42
 }
-
