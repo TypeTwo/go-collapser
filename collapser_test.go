@@ -11,15 +11,15 @@ import (
 	"time"
 )
 
-// Tests that Do() invokes the given function, and the returned TaskResult
+// Tests that Do() invokes the given function, and the returned CollapsedResult
 // contains the function return value.
 func TestDo(t *testing.T) {
-	coll := NewCollapser()
+	c := NewCollapser()
 
 	pre := 1
 	val := 42
 
-	res := coll.Do("key", func() interface{} {
+	res := c.Do("key", func() interface{} {
 		pre = val
 		return val
 	})
@@ -32,7 +32,7 @@ func TestDo(t *testing.T) {
 		t.Fatal("expected collapser result to contain function result")
 	}
 
-	if res.Collapsed() != 1 {
+	if res.NumCollapsed() != 1 {
 		t.Fatal("expected collapsed count to be 1")
 	}
 }
@@ -58,7 +58,7 @@ func TestDoInvokeSerial(t *testing.T) {
 		if res.Get().(int) != i {
 			t.Fatalf("expected invocation to return value %d", i)
 		}
-		if res.Collapsed() != 1 {
+		if res.NumCollapsed() != 1 {
 			t.Fatal("expected collapsed count to be 1")
 		}
 	}
@@ -94,7 +94,7 @@ func TestDoInvokeParallel(t *testing.T) {
 			if res.Get().(string) != text {
 				t.Fatal("expected invocation to return a string value")
 			}
-			if res.Collapsed() != uint64(n) {
+			if res.NumCollapsed() != uint64(n) {
 				t.Fatalf("expected collapsed count to be %d", n)
 			}
 			wg.Done()
@@ -134,7 +134,7 @@ func TestDoDistinctKeys(t *testing.T) {
 			if res.Get().(string) != text {
 				t.Fatal("expected invocation to return a string value")
 			}
-			if res.Collapsed() != 1 {
+			if res.NumCollapsed() != 1 {
 				t.Fatal("expected collapsed count to be 1")
 			}
 			wg.Done()

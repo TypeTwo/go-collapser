@@ -17,8 +17,10 @@ go get github.com/TypeTwo/go-collapser
 
 ## Design goals
 
-- No external dependencies
-- Easy to use
+- **No external dependencies** - only stdlib packages 
+- **Easy to use** - simple, tested and documented API
+- **Small code base** - do one thing and do it well
+- **Composable** - easy to plug into different contexts (http handlers, db access, remote apis, ...)
 
 ## License
 

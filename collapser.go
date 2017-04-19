@@ -27,19 +27,20 @@ type Collapser struct {
 	tasks map[interface{}]*task
 }
 
-// TaskResult provides access to the function result.
-type TaskResult struct {
+// CollapsedResult provides access to the function result.
+type CollapsedResult struct {
 	res interface{}
 	cnt uint64
 }
 
 // Get returns the result of the original function invocation.
-func (r *TaskResult) Get() interface{} {
+func (r *CollapsedResult) Get() interface{} {
 	return r.res
 }
 
-// Collapsed returns the number of invocations that have been collapsed.
-func (r *TaskResult) Collapsed() uint64 {
+// NumCollapsed returns the number of function invocations that have been
+// collapsed.
+func (r *CollapsedResult) NumCollapsed() uint64 {
 	return atomic.LoadUint64(&r.cnt)
 }
 
@@ -47,7 +48,7 @@ func (r *TaskResult) Collapsed() uint64 {
 // block simultaneous invocations and provides access to shared result.
 type task struct {
 	rw  sync.RWMutex
-	res *TaskResult
+	res *CollapsedResult
 }
 
 // NewCollapser returns a new Collapser in initialized state.
@@ -57,19 +58,19 @@ func NewCollapser() *Collapser {
 	}
 }
 
-// Do executes the given function and returns a TaskResult object wrapping
+// Do executes the given function and returns a CollapsedResult object wrapping
 // the function result. The given key is used by the Collapser to uniquely
 // identify the function invocation. Any identical function invocation (i.e.
 // identified by the same key) which occurs while the original function is
 // executing will be blocked waiting for the running invocation to complete,
-// and will receive a TaskResult object wrapping the function result of the
+// and will receive a CollapsedResult object wrapping the function result of the
 // original function.
-func (c *Collapser) Do(key interface{}, f func() interface{}) *TaskResult {
+func (c *Collapser) Do(key interface{}, f func() interface{}) *CollapsedResult {
 	c.m.Lock()
 	t, exists := c.tasks[key]
 	if !exists {
 		t = &task{}
-		t.res = &TaskResult{}
+		t.res = &CollapsedResult{}
 		t.rw.Lock()
 		c.tasks[key] = t
 	}
